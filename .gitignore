@@ -1,0 +1,10 @@
+*.bin
+*.log
+# core dumps
+core
+# cmake stuffs
+build/
+CMakeFiles/
+# generated binaries
+test_binary
+*.so
