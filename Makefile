@@ -129,29 +129,29 @@ test_binary/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_binary.dir/build.make CMakeFiles/test_binary.dir/build
 .PHONY : test_binary/fast
 
-test-binary.o: test-binary.cpp.o
-.PHONY : test-binary.o
+test_binary.o: test_binary.cpp.o
+.PHONY : test_binary.o
 
 # target to build an object file
-test-binary.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_binary.dir/build.make CMakeFiles/test_binary.dir/test-binary.cpp.o
-.PHONY : test-binary.cpp.o
+test_binary.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_binary.dir/build.make CMakeFiles/test_binary.dir/test_binary.cpp.o
+.PHONY : test_binary.cpp.o
 
-test-binary.i: test-binary.cpp.i
-.PHONY : test-binary.i
+test_binary.i: test_binary.cpp.i
+.PHONY : test_binary.i
 
 # target to preprocess a source file
-test-binary.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_binary.dir/build.make CMakeFiles/test_binary.dir/test-binary.cpp.i
-.PHONY : test-binary.cpp.i
+test_binary.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_binary.dir/build.make CMakeFiles/test_binary.dir/test_binary.cpp.i
+.PHONY : test_binary.cpp.i
 
-test-binary.s: test-binary.cpp.s
-.PHONY : test-binary.s
+test_binary.s: test_binary.cpp.s
+.PHONY : test_binary.s
 
 # target to generate assembly for a file
-test-binary.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_binary.dir/build.make CMakeFiles/test_binary.dir/test-binary.cpp.s
-.PHONY : test-binary.cpp.s
+test_binary.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_binary.dir/build.make CMakeFiles/test_binary.dir/test_binary.cpp.s
+.PHONY : test_binary.cpp.s
 
 # Help Target
 help:
@@ -162,9 +162,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test_binary"
-	@echo "... test-binary.o"
-	@echo "... test-binary.i"
-	@echo "... test-binary.s"
+	@echo "... test_binary.o"
+	@echo "... test_binary.i"
+	@echo "... test_binary.s"
 .PHONY : help
 
 

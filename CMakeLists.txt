@@ -5,4 +5,4 @@ add_definitions(-std=c++17)
 
 include_directories(include)
 
-add_executable(test_binary test-binary.cpp)
+add_executable(test_binary test_binary.cpp)

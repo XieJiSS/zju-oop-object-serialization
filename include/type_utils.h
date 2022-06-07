@@ -29,10 +29,12 @@ namespace serializer {
 
   namespace {
     // Modified from https://stackoverflow.com/a/16397153/8553479
-    // final step: stop the recursion
+
     // We'd like to fail the compilation if i > sizeof...(Tp), because this indicates a
     // coding error, and should not be silently ignored. So we use i == sizeof...(Tp)
-    // instead of i >= sizeof...(Tp).
+    // instead of i >= sizeof...(Tp) for the final step.
+
+    // final step: stop the recursion
     template<size_t i = 0, typename Func, typename... Tp>
     typename std::enable_if_t<i == sizeof...(Tp), void> foreach_in_tuple(std::tuple<Tp...>&, Func) {}
     // recursive step: call the function on each element of the tuple
@@ -43,9 +45,6 @@ namespace serializer {
     }
     
     // final step: stop the recursion
-    // We'd like to fail the compilation if i > sizeof...(Tp), because this indicates a
-    // coding error, and should not be silently ignored. So we use i == sizeof...(Tp)
-    // instead of i >= sizeof...(Tp).
     template<size_t i = 0, typename Func, typename... Tp>
     typename std::enable_if_t<i == sizeof...(Tp), void> foreach_in_tuple(const std::tuple<Tp...>&, Func) {}
     // recursive step: call the function on each element of the tuple
@@ -186,4 +185,7 @@ namespace serializer {
                                   std::is_same_v<T, string>      ||
                                   std::is_same_v<T, const char*> ||
                                   std::is_arithmetic_v<T>;
+
+  template<typename T>
+  constexpr auto is_supported_literal_v = is_supported_v<T> && !is_supported_container_v<T>;
 }

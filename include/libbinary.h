@@ -175,11 +175,22 @@ namespace serializer {
             serialize(elem, os);
           }
         } else {
-          std::cerr << "serialize: unreachable code reached" << std::endl;
+          // We cannot use static_assert(false), because it is an ill-formed NDR.
+          // See also: C++ standard [temp.res]/8.
+          // See also: https://stackoverflow.com/a/14637372/8553479
+          static_assert(
+            is_pair_v<T> ||
+            is_array_container_v<T> ||
+            is_tuple_v<T> ||
+            is_map_container_v<T> ||
+            is_set_container_v<T>,
+            "T is a supported container type, but it's serializer is missing or incorrectly implemented"
+          );
         }
-      } else if constexpr (is_same_v<T, string> || is_same_v<T, const char*> || std::is_arithmetic_v<T>) {
+      } else if constexpr (is_supported_literal_v<T>) {
         _write(os, t);
       } else {
+        // ditto.
         static_assert(is_supported_v<T>, "T is not a supported type, you must provide a serialize function");
       }
     }
@@ -261,11 +272,22 @@ namespace serializer {
             t.insert(value);
           }
         } else {
-          static_assert(is_array_container_v<T> || is_map_container_v<T> || is_set_container_v<T>, "unreachable code reached");
+          // We cannot use static_assert(false), because it is an ill-formed NDR.
+          // See also: C++ standard [temp.res]/8.
+          // See also: https://stackoverflow.com/a/14637372/8553479
+          static_assert(
+            is_pair_v<T> ||
+            is_array_container_v<T> ||
+            is_tuple_v<T> ||
+            is_map_container_v<T> ||
+            is_set_container_v<T>,
+            "T is a supported container type, but it's deserializer is missing or incorrectly implemented"
+          );
         }
-      } else if constexpr (is_same_v<T, string> || is_same_v<T, const char*> || std::is_arithmetic_v<T>) {
+      } else if constexpr (is_supported_literal_v<T>) {
         _read(is, t);
       } else {
+        // ditto.
         static_assert(is_supported_v<T>, "T is not a supported type, you must provide a deserialize function");
       }
     }
