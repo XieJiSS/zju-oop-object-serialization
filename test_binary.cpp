@@ -1,4 +1,6 @@
 #include "libbinary.h"
+#include "test_utils.h"
+
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -10,24 +12,14 @@
 #include <set>
 #include <tuple>
 
-bool has_failed = false;
-
-#define EXPECT_EQ(a, b, name) \
-  do { \
-    if (a != b) { \
-      has_failed = true; \
-      std::cerr << "FAILED " << name << ": " << a << " != " << b << std::endl; \
-    } else { \
-      std::cout << "PASSED " << name << ": " << a << " == " << b << std::endl; \
-    } \
-  } while(0);
-
 using std::string;
 using std::vector;
 using std::list;
 using std::map;
 using std::unordered_map;
 using std::set;
+using std::pair;
+using std::tuple;
 using std::cout;
 using std::endl;
 
@@ -56,6 +48,7 @@ void deserializeMyStruct(UserDefinedType& udt, const string& str) {
 
 int main() {
   cout << std::setprecision(10);
+
   // test arithmetic types
   unsigned char u_char1 = 0xFF, u_char2;
   signed char s_char1 = -1, s_char2;
@@ -185,17 +178,17 @@ int main() {
   cout << endl;
 
   // test std::pair
-  std::pair<int, int> pair1 = {1, 2};
+  pair<int, int> pair1 = {1, 2};
   serialize(pair1, "result/pair.bin");
-  std::pair<int, int> pair2;
+  pair<int, int> pair2;
   deserialize(pair2, "result/pair.bin");
   EXPECT_EQ(pair1.first, pair2.first, "pair.first");
   EXPECT_EQ(pair1.second, pair2.second, "pair.second");
 
   // test std::tuple
-  std::tuple<int, int, int> tuple1 = {1, 2, 3};
+  tuple<int, int, int> tuple1 = {1, 2, 3};
   serialize(tuple1, "result/tuple.bin");
-  std::tuple<int, int, int> tuple2;
+  tuple<int, int, int> tuple2;
   deserialize(tuple2, "result/tuple.bin");
   EXPECT_EQ(std::get<0>(tuple1), std::get<0>(tuple2), "std::get<0>(tuple)");
   EXPECT_EQ(std::get<1>(tuple1), std::get<1>(tuple2), "std::get<1>(tuple)");
@@ -218,9 +211,5 @@ int main() {
     cout << "PASSED (XFAIL) deserialize(udt1, \"result/non_existing_file.bin\") failed as expected." << endl;
   }
 
-  if(has_failed) {
-    cout << "Some tests have failed!" << endl;
-  } else {
-    cout << "All tests passed!" << endl;
-  }
+  SHOW_TEST_RESULTS();
 }
