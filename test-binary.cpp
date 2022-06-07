@@ -8,6 +8,7 @@
 #include <map>
 #include <unordered_map>
 #include <set>
+#include <tuple>
 
 bool has_failed = false;
 
@@ -182,6 +183,23 @@ int main() {
     cout << i.first << "->" << i.second << " ";
   }
   cout << endl;
+
+  // test std::pair
+  std::pair<int, int> pair1 = {1, 2};
+  serialize(pair1, "result/pair.bin");
+  std::pair<int, int> pair2;
+  deserialize(pair2, "result/pair.bin");
+  EXPECT_EQ(pair1.first, pair2.first, "pair.first");
+  EXPECT_EQ(pair1.second, pair2.second, "pair.second");
+
+  // test std::tuple
+  std::tuple<int, int, int> tuple1 = {1, 2, 3};
+  serialize(tuple1, "result/tuple.bin");
+  std::tuple<int, int, int> tuple2;
+  deserialize(tuple2, "result/tuple.bin");
+  EXPECT_EQ(std::get<0>(tuple1), std::get<0>(tuple2), "std::get<0>(tuple)");
+  EXPECT_EQ(std::get<1>(tuple1), std::get<1>(tuple2), "std::get<1>(tuple)");
+  EXPECT_EQ(std::get<2>(tuple1), std::get<2>(tuple2), "std::get<2>(tuple)");
 
   // test user-defined types
   UserDefinedType udt1 = {1, "MyName", {4.1, 5.2, 6.3}};

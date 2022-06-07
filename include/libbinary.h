@@ -139,21 +139,38 @@ namespace serializer {
       _debug("serialize(const T& t, std::ostream& os)");
       if constexpr (is_supported_container_v<T>) {
         _debug("is_supported_container_v<T>");
-        size_t size = t.size();
-        _write(os, size, sizeof(size));
-        if constexpr (is_array_container_v<T>) {
+        if constexpr (is_pair_v<T>) {
+          _debug("serialize: is_pair_v<T>");
+          serialize(t.first, os);
+          serialize(t.second, os);
+        } else if constexpr (is_array_container_v<T>) {
           _debug("serialize: is_array_container_v<T>");
+          size_t size = t.size();
+          _write(os, size, sizeof(size));
           for (const auto& elem : t) {
             serialize(elem, os);
           }
+        } else if constexpr (is_tuple_v<T>) {
+          _debug("serialize: is_tuple_v<T>");
+          constexpr size_t size = std::tuple_size_v<T>;
+          _write(os, size, sizeof(size));
+          // Here we use foreach_in_tuple to iterate over the elements of the tuple at
+          // compile time, since std::get<i> is constexpr after C++14.
+          foreach_in_tuple(t, [&](const auto& elem) {
+            serialize(elem, os);
+          });
         } else if constexpr (is_map_container_v<T>) {
           _debug("serialize: is_map_container_v<T>");
+          size_t size = t.size();
+          _write(os, size, sizeof(size));
           for (const auto& elem : t) {
             serialize(elem.first, os);
             serialize(elem.second, os);
           }
         } else if constexpr (is_set_container_v<T>) {
           _debug("serialize: is_set_container_v<T>");
+          size_t size = t.size();
+          _write(os, size, sizeof(size));
           for (const auto& elem : t) {
             serialize(elem, os);
           }
@@ -195,19 +212,38 @@ namespace serializer {
       _debug("deserialize(T& t, std::istream& is)");
       if constexpr (is_supported_container_v<T>) {
         _debug("is_supported_container_v<T>");
-        size_t size;
-        _read(is, size);
-        if constexpr (is_array_container_v<T>) {
+        if constexpr (is_pair_v<T>) {
+          _debug("deserialize: is_pair_v<T>");
+          typename T::first_type first;
+          typename T::second_type second;
+          deserialize(first, is);
+          deserialize(second, is);
+          t = std::make_pair(first, second);
+        } else if constexpr (is_array_container_v<T>) {
           _debug("deserialize: is_array_container_v<T>");
-          t.resize(size);
+          size_t size;
+          _read(is, size);
           _debug("deserialize: resizing to " + std::to_string(size));
+          t.resize(size);
           for (auto& elem : t) {
             // here we use the reference to the element in the container
             // because std::list does not support operator[]
             deserialize(elem, is);
           }
+        } else if constexpr (is_tuple_v<T>) {
+          _debug("deserialize: is_tuple_v<T>");
+          size_t size = std::tuple_size_v<T>;
+          _read(is, size);
+          ASSERT(size == std::tuple_size_v<T>);
+          // Here we use foreach_in_tuple to iterate over the elements of the tuple at
+          // compile time, since std::get<i> is constexpr after C++14.
+          foreach_in_tuple(t, [&](auto& elem) {
+            deserialize(elem, is);
+          });
         } else if constexpr (is_map_container_v<T>) {
           _debug("deserialize: is_map_container_v<T>");
+          size_t size;
+          _read(is, size);
           for (size_t i = 0; i < size; ++i) {
             typename T::key_type key;
             typename T::mapped_type value;
@@ -217,6 +253,8 @@ namespace serializer {
           }
         } else if constexpr (is_set_container_v<T>) {
           _debug("deserialize: is_set_container_v<T>");
+          size_t size;
+          _read(is, size);
           for (size_t i = 0; i < size; ++i) {
             typename T::value_type value;
             deserialize(value, is);
