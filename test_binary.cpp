@@ -107,21 +107,17 @@ int main() {
   serialize(vec1, "result/vector.bin");
   vector<int> vec2;
   deserialize(vec2, "result/vector.bin");
-  cout << "std::vector: ";
-  for (auto i : vec1) {
-    cout << i << " ";
+  EXPECT_EQ(vec1.size(), vec2.size(), "vector.size()");
+  for(auto i = 0; i < vec1.size(); i++) {
+    EXPECT_EQ(vec1[i], vec2[i], "vector[i]");
   }
-  cout << "should be the same as ";
-  for (auto i : vec2) {
-    cout << i << " ";
-  }
-  cout << endl;
 
   // test list
   list<int> list1 = {1, 2, 3, 4};
   serialize(list1, "result/list.bin");
   list<int> list2;
   deserialize(list2, "result/list.bin");
+  EXPECT_EQ(list1.size(), list2.size(), "list.size()");
   cout << "std::list: ";
   for (auto i : list1) {
     cout << i << " ";
@@ -137,6 +133,7 @@ int main() {
   serialize(map1, "result/map.bin");
   map<int, int> map2;
   deserialize(map2, "result/map.bin");
+  EXPECT_EQ(map1.size(), map2.size(), "map.size()");
   cout << "std::map: ";
   for (auto i : map1) {
     cout << i.first << "->" << i.second << " ";
@@ -152,6 +149,7 @@ int main() {
   serialize(set1, "result/set.bin");
   set<int> set2;
   deserialize(set2, "result/set.bin");
+  EXPECT_EQ(set1.size(), set2.size(), "set.size()");
   cout << "std::set: ";
   for (auto i : set1) {
     cout << i << " ";
@@ -167,6 +165,7 @@ int main() {
   serialize(unordered_map1, "result/unordered_map.bin");
   unordered_map<int, int> unordered_map2;
   deserialize(unordered_map2, "result/unordered_map.bin");
+  EXPECT_EQ(unordered_map1.size(), unordered_map2.size(), "unordered_map.size()");
   cout << "std::unordered_map: ";
   for (auto i : unordered_map1) {
     cout << i.first << "->" << i.second << " ";
@@ -209,6 +208,48 @@ int main() {
     EXPECT_EQ(1, 0, "deserialize from non-existing file should throw an exception");
   } catch (const std::exception& e) {
     cout << "PASSED (XFAIL) deserialize(udt1, \"result/non_existing_file.bin\") failed as expected." << endl;
+  }
+
+  // test consts
+  // const arithmetic
+  const int const_int1 = 1;
+  serialize(const_int1, "result/const_int.bin");
+  int const_int2;
+  deserialize(const_int2, "result/const_int.bin");
+  EXPECT_EQ(const_int1, const_int2, "const int");
+
+  // const string
+  const string const_str1 = "MyName";
+  serialize(const_str1, "result/const_str.bin");
+  string const_str2;
+  deserialize(const_str2, "result/const_str.bin");
+  EXPECT_EQ(const_str1, const_str2, "const string");
+
+  // const pair (test trivial container)
+  const pair<int, int> const_pair1 = {1, 2};
+  serialize(const_pair1, "result/const_pair.bin");
+  pair<int, int> const_pair2;
+  deserialize(const_pair2, "result/const_pair.bin");
+  EXPECT_EQ(const_pair1.first, const_pair2.first, "const pair.first");
+  EXPECT_EQ(const_pair1.second, const_pair2.second, "const pair.second");
+
+  // const tuple (test non-trivial container)
+  const tuple<int, int, int> const_tuple1 = {1, 2, 3};
+  serialize(const_tuple1, "result/const_tuple.bin");
+  tuple<int, int, int> const_tuple2;
+  deserialize(const_tuple2, "result/const_tuple.bin");
+  EXPECT_EQ(std::get<0>(const_tuple1), std::get<0>(const_tuple2), "std::get<0>(const_tuple)");
+  EXPECT_EQ(std::get<1>(const_tuple1), std::get<1>(const_tuple2), "std::get<1>(const_tuple)");
+  EXPECT_EQ(std::get<2>(const_tuple1), std::get<2>(const_tuple2), "std::get<2>(const_tuple)");
+
+  // const vector (test non-trivial container)
+  const vector<int> const_vector1 = {1, 2, 3, 4, 5};
+  serialize(const_vector1, "result/const_vector.bin");
+  vector<int> const_vector2;
+  deserialize(const_vector2, "result/const_vector.bin");
+  EXPECT_EQ(const_vector1.size(), const_vector2.size(), "const vector.size");
+  for(auto i = 0; i < const_vector1.size(); i++) {
+    EXPECT_EQ(const_vector1[i], const_vector2[i], "const vector[i]");
   }
 
   SHOW_TEST_RESULTS();
