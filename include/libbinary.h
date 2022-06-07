@@ -24,6 +24,7 @@
 
 using std::string;
 using std::is_same_v;
+using std::remove_cv_t;
 
 // Here, we're writing the declaration and the definition together, in a header file,
 // so that we can make sure the definition is always in the same translation unit with
@@ -60,7 +61,7 @@ namespace serializer {
         _debug("_write(std::ostream& os, const T& t, size_t size)");
         static_assert(!is_array_container_v<T>, "T must not be a container");
         // strings are handled separately
-        static_assert(!is_same_v<T, std::string>, "T must not be a string");
+        static_assert(!is_same_v<remove_cv_t<T>, std::string>, "T must not be a string");
         os.write(reinterpret_cast<const char*>(&size), sizeof(size));
         if constexpr (std::is_pointer_v<T>) {
           os.write(reinterpret_cast<const char*>(t), size);
@@ -74,7 +75,7 @@ namespace serializer {
       void _write(std::ostream& os, const T& t) {
         _debug("_write(std::ostream& os, const T& t)");
         static_assert(!is_array_container_v<T>, "T must not be a container");
-        static_assert(!is_same_v<T, std::string>, "T must not be a string");
+        static_assert(!is_same_v<remove_cv_t<T>, std::string>, "T must not be a string");
         const size_t size = sizeof(t);
         os.write(reinterpret_cast<const char*>(&size), sizeof(size));
         os.write(reinterpret_cast<const char*>(&t), size);
@@ -91,7 +92,7 @@ namespace serializer {
       void _read(std::istream& is, T& t) {
         _debug("_read(std::istream& is, T& t)");
         static_assert(!is_array_container_v<T>, "T must not be a container");
-        static_assert(!is_same_v<T, std::string>, "T must not be a string");
+        static_assert(!is_same_v<remove_cv_t<T>, std::string>, "T must not be a string");
         size_t size;
         is.read(reinterpret_cast<char*>(&size), sizeof(size));
         if constexpr (std::is_pointer_v<T>) {
@@ -175,23 +176,12 @@ namespace serializer {
             serialize(elem, os);
           }
         } else {
-          // We cannot use static_assert(false), because it is an ill-formed NDR.
-          // See also: C++ standard [temp.res]/8.
-          // See also: https://stackoverflow.com/a/14637372/8553479
-          static_assert(
-            is_pair_v<T> ||
-            is_array_container_v<T> ||
-            is_tuple_v<T> ||
-            is_map_container_v<T> ||
-            is_set_container_v<T>,
-            "T is a supported container type, but it's serializer is missing or incorrectly implemented"
-          );
+          constexpr auto x = impossible_error(t, "T is a supported container type, but it's serializer is missing.");
         }
       } else if constexpr (is_supported_literal_v<T>) {
         _write(os, t);
       } else {
-        // ditto.
-        static_assert(is_supported_v<T>, "T is not a supported type, you must provide a serialize function");
+        constexpr auto x = impossible_error(t, "T is not a supported type, you must provide a serialize function");
       }
     }
     template<typename T>
@@ -272,23 +262,12 @@ namespace serializer {
             t.insert(value);
           }
         } else {
-          // We cannot use static_assert(false), because it is an ill-formed NDR.
-          // See also: C++ standard [temp.res]/8.
-          // See also: https://stackoverflow.com/a/14637372/8553479
-          static_assert(
-            is_pair_v<T> ||
-            is_array_container_v<T> ||
-            is_tuple_v<T> ||
-            is_map_container_v<T> ||
-            is_set_container_v<T>,
-            "T is a supported container type, but it's deserializer is missing or incorrectly implemented"
-          );
+          constexpr auto x = impossible_error(t, "T is a supported container type, but it's serializer is missing.");
         }
       } else if constexpr (is_supported_literal_v<T>) {
         _read(is, t);
       } else {
-        // ditto.
-        static_assert(is_supported_v<T>, "T is not a supported type, you must provide a deserialize function");
+        constexpr auto x = impossible_error(t, "T is not a supported type, you must provide a deserialize function");
       }
     }
     template<typename T>

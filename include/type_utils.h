@@ -1,14 +1,19 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 #include <vector>
 #include <list>
-#include <variant>
 #include <initializer_list>
 #include <type_traits>
+#include <list>
+#include <map>
+#include <unordered_map>
+#include <set>
 #include <tuple>
 
 using std::string;
+using std::remove_cv_t;
 
 namespace serializer {
   // anonymous namespace for private-like helper functions, i.e. _debug
@@ -66,17 +71,17 @@ namespace serializer {
     // So I'm not really sure if it is a good idea to replace those harder-to-understand
     // type checkers with this one. Leaving them as-is for now.
     // See also: https://stackoverflow.com/questions/12919310/c-detect-templated-class
-    template <typename T, template <typename...> class Template>
+    template<typename T, template <typename...> class Template>
     struct is_specialization_of_shim : std::false_type {};
 
-    template <template <typename...> class Template, typename... Args>
+    template<template <typename...> class Template, typename... Args>
     struct is_specialization_of_shim<Template<Args...>, Template> : std::true_type {};
 
     template<typename T>
     struct _is_tuple : is_specialization_of_shim<typename std::decay_t<T>, std::tuple> {};
 
     template<typename T>
-    constexpr bool is_tuple_v = _is_tuple<T>::value;
+    constexpr bool is_tuple_v = _is_tuple<remove_cv_t<T>>::value;
   }
 
   // Check if a type is a std::pair-like type, i.e. has a first and second member
@@ -93,11 +98,11 @@ namespace serializer {
     >> {
       // tuples might also have first_type and second_type, but we don't want to
       // treat them as std::pair.
-      static constexpr bool v = !is_tuple_v<T>;
+      static constexpr bool v = !is_tuple_v<remove_cv_t<T>>;
     };
   }
   template<typename T>
-  constexpr auto is_pair_v = P<T>::v;
+  constexpr auto is_pair_v = P<remove_cv_t<T>>::v;
   
   // Check if a type is an array-like container (namely, std::vector or std::list).
   namespace {
@@ -114,7 +119,7 @@ namespace serializer {
     };
   }
   template<typename T>
-  constexpr auto is_array_container_v = A<T>::v;
+  constexpr auto is_array_container_v = A<remove_cv_t<T>>::v;
 
 
   // Check if a type is a map-like container. That is, any container with key_type and mapped_type
@@ -136,7 +141,7 @@ namespace serializer {
     };
   }
   template<typename T>
-  constexpr auto is_map_container_v = M<T>::v;
+  constexpr auto is_map_container_v = M<remove_cv_t<T>>::v;
 
 
   // Check if a type is a set container.
@@ -154,7 +159,7 @@ namespace serializer {
     };
   }
   template<typename T>
-  constexpr auto is_set_container_v = S<T>::v;
+  constexpr auto is_set_container_v = S<remove_cv_t<T>>::v;
 
   
   // Check if a type is a supported container.
@@ -178,14 +183,28 @@ namespace serializer {
   // Here, we have to pick is_tuple_v<T> out of the struct C<Container<T, Alloc>>,
   // because it does not work with the reconstructed container type prob_t.
   template<typename T>
-  constexpr auto is_supported_container_v = C<T>::v || is_tuple_v<T>;
+  constexpr auto is_supported_container_v = C<remove_cv_t<T>>::v || is_tuple_v<remove_cv_t<T>>;
 
   template<typename T>
-  constexpr auto is_supported_v = is_supported_container_v<T>    ||
-                                  std::is_same_v<T, string>      ||
-                                  std::is_same_v<T, const char*> ||
-                                  std::is_arithmetic_v<T>;
+  constexpr auto is_string_cstring_v = std::is_same_v<remove_cv_t<T>, string> ||
+                                       std::is_same_v<remove_cv_t<T>, char*>;
 
   template<typename T>
-  constexpr auto is_supported_literal_v = is_supported_v<T> && !is_supported_container_v<T>;
+  constexpr auto is_supported_v = is_supported_container_v<remove_cv_t<T>> ||
+                                  is_string_cstring_v<remove_cv_t<T>>      ||
+                                  std::is_arithmetic_v<T>;  // is_arithmetic_v has remove_cv_t inside.
+
+  template<typename T>
+  constexpr auto is_supported_literal_v = is_supported_v<remove_cv_t<T>> &&
+                                          !is_supported_container_v<remove_cv_t<T>>;
+
+  // We cannot use static_assert(false), because it is an ill-formed NDR. This is a workaround.
+  // The T&& is needed to make the function constexpr.
+  // See also: C++ standard [temp.res]/8.
+  // See also: https://stackoverflow.com/a/14637372/8553479
+  // See also: https://lists.isocpp.org/std-discussion/2021/01/0965.php
+  template<typename T>
+  constexpr bool impossible_error(T&&, const char* msg) {
+    throw msg;
+  }
 }
