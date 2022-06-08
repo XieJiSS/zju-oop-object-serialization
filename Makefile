@@ -142,6 +142,30 @@ test_xml/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/build
 .PHONY : test_xml/fast
 
+include/thirdparty/base64.o: include/thirdparty/base64.cpp.o
+.PHONY : include/thirdparty/base64.o
+
+# target to build an object file
+include/thirdparty/base64.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/include/thirdparty/base64.cpp.o
+.PHONY : include/thirdparty/base64.cpp.o
+
+include/thirdparty/base64.i: include/thirdparty/base64.cpp.i
+.PHONY : include/thirdparty/base64.i
+
+# target to preprocess a source file
+include/thirdparty/base64.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/include/thirdparty/base64.cpp.i
+.PHONY : include/thirdparty/base64.cpp.i
+
+include/thirdparty/base64.s: include/thirdparty/base64.cpp.s
+.PHONY : include/thirdparty/base64.s
+
+# target to generate assembly for a file
+include/thirdparty/base64.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/include/thirdparty/base64.cpp.s
+.PHONY : include/thirdparty/base64.cpp.s
+
 include/thirdparty/tinyxml2.o: include/thirdparty/tinyxml2.cpp.o
 .PHONY : include/thirdparty/tinyxml2.o
 
@@ -224,6 +248,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test_binary"
 	@echo "... test_xml"
+	@echo "... include/thirdparty/base64.o"
+	@echo "... include/thirdparty/base64.i"
+	@echo "... include/thirdparty/base64.s"
 	@echo "... include/thirdparty/tinyxml2.o"
 	@echo "... include/thirdparty/tinyxml2.i"
 	@echo "... include/thirdparty/tinyxml2.s"
