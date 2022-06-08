@@ -14,13 +14,7 @@
 #include <stdexcept>
 
 #include "type_utils.h"
-
-#define ASSERT(a) \
-  do { \
-    if (!(a)) { \
-      throw std::runtime_error("Assertion failed: " #a); \
-    } \
-  } while(0);
+#include "common.h"
 
 using std::string;
 using std::is_same_v;
@@ -157,7 +151,7 @@ namespace serializer {
           _write(os, size, sizeof(size));
           // Here we use foreach_in_tuple to iterate over the elements of the tuple at
           // compile time, since std::get<i> is constexpr after C++14.
-          foreach_in_tuple(t, [&](const auto& elem) {
+          foreach_in_tuple(t, [&](const auto& elem, auto) {
             serialize(elem, os);
           });
         } else if constexpr (is_map_container_v<T>) {
@@ -179,7 +173,12 @@ namespace serializer {
           constexpr auto x = impossible_error(t, "T is a supported container type, but it's serializer is missing.");
         }
       } else if constexpr (is_supported_literal_v<T>) {
-        _write(os, t);
+        if constexpr (is_cstring_v<T>) {
+          // Storing char* as string to make life easier.
+          serialize(string(t), os);
+        } else {
+          _write(os, t);
+        }
       } else {
         constexpr auto x = impossible_error(t, "T is not a supported type, you must provide a serialize function");
       }
@@ -238,7 +237,7 @@ namespace serializer {
           ASSERT(size == std::tuple_size_v<T>);
           // Here we use foreach_in_tuple to iterate over the elements of the tuple at
           // compile time, since std::get<i> is constexpr after C++14.
-          foreach_in_tuple(t, [&](auto& elem) {
+          foreach_in_tuple(t, [&](auto& elem, auto) {
             deserialize(elem, is);
           });
         } else if constexpr (is_map_container_v<T>) {
@@ -265,7 +264,15 @@ namespace serializer {
           constexpr auto x = impossible_error(t, "T is a supported container type, but it's serializer is missing.");
         }
       } else if constexpr (is_supported_literal_v<T>) {
-        _read(is, t);
+        if constexpr (is_cstring_v<T>) {
+          // Reading a string in this case, because we are storing char* as strings.
+          string s;
+          deserialize(s, is);
+          // The user should preallocate enough spaces for C-style strings.
+          memcpy(t, s.c_str(), s.size());
+        } else {
+          _read(is, t);
+        }
       } else {
         constexpr auto x = impossible_error(t, "T is not a supported type, you must provide a deserialize function");
       }

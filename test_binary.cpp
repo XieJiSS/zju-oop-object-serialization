@@ -252,5 +252,12 @@ int main() {
     EXPECT_EQ(const_vector1[i], const_vector2[i], "const vector[i]");
   }
 
+  // const char*
+  const char* const_cstr1 = "MyName";
+  serialize(const_cstr1, "result/const_cstr.bin");
+  char* const_cstr2 = (char *)malloc(strlen(const_cstr1) + 1);
+  deserialize(const_cstr2, "result/const_cstr.bin");
+  EXPECT_EQ(string(const_cstr1), string(const_cstr2), "const char*");
+
   SHOW_TEST_RESULTS();
 }
