@@ -18,5 +18,5 @@ static bool has_failed = false;
   if (has_failed) { \
     std::cout << "Some tests have failed!" << std::endl; \
   } else { \
-    std::cout << "All tests passed!" << std::endl; \
+    std::cout << "All tests have passed!" << std::endl; \
   }

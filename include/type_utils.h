@@ -45,7 +45,7 @@ namespace serializer {
     // recursive step: call the function on each element of the tuple
     template<size_t i = 0, typename Func, typename... Tp>
     typename std::enable_if_t<i < sizeof...(Tp), void> foreach_in_tuple(std::tuple<Tp...>& t, Func f) {
-      f(std::get<i>(t));
+      f(std::get<i>(t), i);
       foreach_in_tuple<i + 1, Func, Tp...>(t, f);
     }
     
@@ -55,7 +55,7 @@ namespace serializer {
     // recursive step: call the function on each element of the tuple
     template<size_t i = 0, typename Func, typename... Tp>
     typename std::enable_if_t<i < sizeof...(Tp), void> foreach_in_tuple(const std::tuple<Tp...>& t, Func f) {
-      f(std::get<i>(t));
+      f(std::get<i>(t), i);
       foreach_in_tuple<i + 1, Func, Tp...>(t, f);
     }
   }
@@ -185,9 +185,14 @@ namespace serializer {
   template<typename T>
   constexpr auto is_supported_container_v = C<remove_cv_t<T>>::v || is_tuple_v<remove_cv_t<T>>;
 
+  // we don't want to treat char* const as cstring, so we should not wrap T with remove_cv_t.
+  template<typename T>
+  constexpr auto is_cstring_v = std::is_same_v<T, char*> ||
+                                std::is_same_v<T, const char*>;
+  
   template<typename T>
   constexpr auto is_string_cstring_v = std::is_same_v<remove_cv_t<T>, string> ||
-                                       std::is_same_v<remove_cv_t<T>, char*>;
+                                       is_cstring_v<T>;  // ditto, no remove_cv_t.
 
   template<typename T>
   constexpr auto is_supported_v = is_supported_container_v<remove_cv_t<T>> ||

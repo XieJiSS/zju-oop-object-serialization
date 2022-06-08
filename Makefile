@@ -129,6 +129,43 @@ test_binary/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_binary.dir/build.make CMakeFiles/test_binary.dir/build
 .PHONY : test_binary/fast
 
+#=============================================================================
+# Target rules for targets named test_xml
+
+# Build rule for target.
+test_xml: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_xml
+.PHONY : test_xml
+
+# fast build rule for target.
+test_xml/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/build
+.PHONY : test_xml/fast
+
+include/thirdparty/tinyxml2.o: include/thirdparty/tinyxml2.cpp.o
+.PHONY : include/thirdparty/tinyxml2.o
+
+# target to build an object file
+include/thirdparty/tinyxml2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/include/thirdparty/tinyxml2.cpp.o
+.PHONY : include/thirdparty/tinyxml2.cpp.o
+
+include/thirdparty/tinyxml2.i: include/thirdparty/tinyxml2.cpp.i
+.PHONY : include/thirdparty/tinyxml2.i
+
+# target to preprocess a source file
+include/thirdparty/tinyxml2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/include/thirdparty/tinyxml2.cpp.i
+.PHONY : include/thirdparty/tinyxml2.cpp.i
+
+include/thirdparty/tinyxml2.s: include/thirdparty/tinyxml2.cpp.s
+.PHONY : include/thirdparty/tinyxml2.s
+
+# target to generate assembly for a file
+include/thirdparty/tinyxml2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/include/thirdparty/tinyxml2.cpp.s
+.PHONY : include/thirdparty/tinyxml2.cpp.s
+
 test_binary.o: test_binary.cpp.o
 .PHONY : test_binary.o
 
@@ -153,6 +190,30 @@ test_binary.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_binary.dir/build.make CMakeFiles/test_binary.dir/test_binary.cpp.s
 .PHONY : test_binary.cpp.s
 
+test_xml.o: test_xml.cpp.o
+.PHONY : test_xml.o
+
+# target to build an object file
+test_xml.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/test_xml.cpp.o
+.PHONY : test_xml.cpp.o
+
+test_xml.i: test_xml.cpp.i
+.PHONY : test_xml.i
+
+# target to preprocess a source file
+test_xml.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/test_xml.cpp.i
+.PHONY : test_xml.cpp.i
+
+test_xml.s: test_xml.cpp.s
+.PHONY : test_xml.s
+
+# target to generate assembly for a file
+test_xml.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/test_xml.cpp.s
+.PHONY : test_xml.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -162,9 +223,16 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test_binary"
+	@echo "... test_xml"
+	@echo "... include/thirdparty/tinyxml2.o"
+	@echo "... include/thirdparty/tinyxml2.i"
+	@echo "... include/thirdparty/tinyxml2.s"
 	@echo "... test_binary.o"
 	@echo "... test_binary.i"
 	@echo "... test_binary.s"
+	@echo "... test_xml.o"
+	@echo "... test_xml.i"
+	@echo "... test_xml.s"
 .PHONY : help
 
 
