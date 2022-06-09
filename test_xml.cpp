@@ -286,10 +286,11 @@ int main() {
 
   // const char*
   const char* const_cstr1 = "MyName";
-  serialize_xml(const_cstr1, "const_cstr", "result/const_cstr.bin");
+  serialize_xml(const_cstr1, "const_cstr", "result/const_cstr.xml");
   char* const_cstr2 = (char *)malloc(strlen(const_cstr1) + 1);
-  deserialize_xml(const_cstr2, "const_cstr", "result/const_cstr.bin");
+  deserialize_xml(const_cstr2, "const_cstr", "result/const_cstr.xml");
   EXPECT_EQ(string(const_cstr1), string(const_cstr2), "const char*");
 
-  SHOW_TEST_RESULTS();
+  SHOW_TEST_RESULT();
+  TEST_QUIT();
 }
