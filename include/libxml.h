@@ -163,7 +163,7 @@ namespace serializer {
     template<typename T>
     void serialize_xml(const T& t, const string &node_name, XMLPrinter *printer) {
       _debug("serialize_xml(const T& t, const string &node_name, XMLPrinter *printer)");
-      printer->OpenElement(node_name.c_str());
+      printer->OpenElement(node_name.c_str(), true);
       if constexpr (is_supported_container_v<T>) {
         _debug("is_supported_container_v<T>");
         if constexpr (is_pair_v<T>) {
@@ -216,15 +216,15 @@ namespace serializer {
       } else {
         constexpr auto x = impossible_error(t, "T is not a supported type, you must derive T from XMLSerializable");
       }
-      printer->CloseElement();
+      printer->CloseElement(true);
     }
     template<typename T>
     void serialize_xml(const T& t, const string &node_name, const string &file_name) {
       _debug("serialize_xml(const T& t, const string &node_name, const string &file_name)");
       XMLPrinter printer;
-      printer.OpenElement("serialization");
+      printer.OpenElement("serialization", true);
       serialize_xml(t, node_name, &printer);
-      printer.CloseElement();
+      printer.CloseElement(true);
       std::ofstream ofs(file_name);
       ASSERT(ofs.is_open());
       ofs << printer.CStr();
@@ -235,9 +235,9 @@ namespace serializer {
     string serialize_to_string_xml(const T& t, const string &node_name) {
       _debug("serialize_to_string_xml(const T& t, const string &node_name)");
       XMLPrinter printer;
-      printer.OpenElement("serialization");
+      printer.OpenElement("serialization", true);
       serialize_xml(t, node_name.c_str(), &printer);
-      printer.CloseElement();
+      printer.CloseElement(true);
       return string(printer.CStr());
     }
     template<typename T>
