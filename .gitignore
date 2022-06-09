@@ -1,5 +1,6 @@
 result/*.bin
 result/*.xml
+result/*.b64
 *.log
 # core dumps
 core
@@ -9,4 +10,5 @@ CMakeFiles/
 # generated binaries
 test_binary
 test_xml
+test_xml_b64
 *.so

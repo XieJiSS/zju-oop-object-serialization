@@ -142,12 +142,25 @@ test_xml/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/build
 .PHONY : test_xml/fast
 
+#=============================================================================
+# Target rules for targets named test_xml_b64
+
+# Build rule for target.
+test_xml_b64: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_xml_b64
+.PHONY : test_xml_b64
+
+# fast build rule for target.
+test_xml_b64/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/build
+.PHONY : test_xml_b64/fast
+
 include/thirdparty/base64.o: include/thirdparty/base64.cpp.o
 .PHONY : include/thirdparty/base64.o
 
 # target to build an object file
 include/thirdparty/base64.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/include/thirdparty/base64.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/include/thirdparty/base64.cpp.o
 .PHONY : include/thirdparty/base64.cpp.o
 
 include/thirdparty/base64.i: include/thirdparty/base64.cpp.i
@@ -155,7 +168,7 @@ include/thirdparty/base64.i: include/thirdparty/base64.cpp.i
 
 # target to preprocess a source file
 include/thirdparty/base64.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/include/thirdparty/base64.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/include/thirdparty/base64.cpp.i
 .PHONY : include/thirdparty/base64.cpp.i
 
 include/thirdparty/base64.s: include/thirdparty/base64.cpp.s
@@ -163,7 +176,7 @@ include/thirdparty/base64.s: include/thirdparty/base64.cpp.s
 
 # target to generate assembly for a file
 include/thirdparty/base64.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/include/thirdparty/base64.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/include/thirdparty/base64.cpp.s
 .PHONY : include/thirdparty/base64.cpp.s
 
 include/thirdparty/tinyxml2.o: include/thirdparty/tinyxml2.cpp.o
@@ -172,6 +185,7 @@ include/thirdparty/tinyxml2.o: include/thirdparty/tinyxml2.cpp.o
 # target to build an object file
 include/thirdparty/tinyxml2.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/include/thirdparty/tinyxml2.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/include/thirdparty/tinyxml2.cpp.o
 .PHONY : include/thirdparty/tinyxml2.cpp.o
 
 include/thirdparty/tinyxml2.i: include/thirdparty/tinyxml2.cpp.i
@@ -180,6 +194,7 @@ include/thirdparty/tinyxml2.i: include/thirdparty/tinyxml2.cpp.i
 # target to preprocess a source file
 include/thirdparty/tinyxml2.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/include/thirdparty/tinyxml2.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/include/thirdparty/tinyxml2.cpp.i
 .PHONY : include/thirdparty/tinyxml2.cpp.i
 
 include/thirdparty/tinyxml2.s: include/thirdparty/tinyxml2.cpp.s
@@ -188,6 +203,7 @@ include/thirdparty/tinyxml2.s: include/thirdparty/tinyxml2.cpp.s
 # target to generate assembly for a file
 include/thirdparty/tinyxml2.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/include/thirdparty/tinyxml2.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/include/thirdparty/tinyxml2.cpp.s
 .PHONY : include/thirdparty/tinyxml2.cpp.s
 
 test_binary.o: test_binary.cpp.o
@@ -238,6 +254,30 @@ test_xml.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/test_xml.cpp.s
 .PHONY : test_xml.cpp.s
 
+test_xml_b64.o: test_xml_b64.cpp.o
+.PHONY : test_xml_b64.o
+
+# target to build an object file
+test_xml_b64.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/test_xml_b64.cpp.o
+.PHONY : test_xml_b64.cpp.o
+
+test_xml_b64.i: test_xml_b64.cpp.i
+.PHONY : test_xml_b64.i
+
+# target to preprocess a source file
+test_xml_b64.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/test_xml_b64.cpp.i
+.PHONY : test_xml_b64.cpp.i
+
+test_xml_b64.s: test_xml_b64.cpp.s
+.PHONY : test_xml_b64.s
+
+# target to generate assembly for a file
+test_xml_b64.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/test_xml_b64.cpp.s
+.PHONY : test_xml_b64.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -248,6 +288,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test_binary"
 	@echo "... test_xml"
+	@echo "... test_xml_b64"
 	@echo "... include/thirdparty/base64.o"
 	@echo "... include/thirdparty/base64.i"
 	@echo "... include/thirdparty/base64.s"
@@ -260,6 +301,9 @@ help:
 	@echo "... test_xml.o"
 	@echo "... test_xml.i"
 	@echo "... test_xml.s"
+	@echo "... test_xml_b64.o"
+	@echo "... test_xml_b64.i"
+	@echo "... test_xml_b64.s"
 .PHONY : help
 
 
