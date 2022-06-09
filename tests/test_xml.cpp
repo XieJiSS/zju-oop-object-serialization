@@ -45,6 +45,7 @@ void _SimpleStruct::deserializeXML(const vector<string>& v) {
   deserialize_from_string_xml(this->b, "s.b", v[1]);
 }
 
+// a nested struct
 struct UserDefinedType : XMLSerializable {
   UserDefinedType() {}
   UserDefinedType(int idx, string name, vector<double> data, _SimpleStruct simpleObj) :

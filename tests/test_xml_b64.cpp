@@ -25,6 +25,7 @@ using std::endl;
 
 using namespace serializer::xml;
 
+// a nested struct
 struct _SimpleStruct : XMLSerializable {
   _SimpleStruct() {}
   _SimpleStruct(int a, int b) : a(a), b(b) {}
