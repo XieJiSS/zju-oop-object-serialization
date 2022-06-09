@@ -84,7 +84,8 @@ namespace serializer {
     constexpr bool is_tuple_v = _is_tuple<remove_cv_t<T>>::value;
   }
 
-  // Check if a type is a std::pair-like type, i.e. has a first and second member
+  // Check if a type is a std::pair-like type, i.e. has first and second member types.
+  // For instance: boost/compressed_pair
   namespace {
     // fallback struct:
     template<typename T, typename U = void>
@@ -96,9 +97,7 @@ namespace serializer {
       typename T::first_type,  // first_type
       typename T::second_type  // second_type
     >> {
-      // tuples might also have first_type and second_type, but we don't want to
-      // treat them as std::pair.
-      static constexpr bool v = !is_tuple_v<remove_cv_t<T>>;
+      static constexpr bool v = true;
     };
   }
   template<typename T>
@@ -210,6 +209,8 @@ namespace serializer {
   // See also: https://lists.isocpp.org/std-discussion/2021/01/0965.php
   template<typename T>
   constexpr bool impossible_error(T&&, const char* msg) {
+    // The compiler will complain "expression ‘<throw-expression>’ is not a constant expression",
+    // but we are okay with that. We just want to see what msg is anyway.
     throw msg;
   }
 }
