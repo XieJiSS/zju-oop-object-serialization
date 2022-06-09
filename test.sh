@@ -1,17 +1,19 @@
 #!/bin/bash
 
+cd "$(dirname "$0")"
+
 echo "[test_daemon] Cleaning previously generated files..."
 ./clean_generated.sh
-
-cd "$(dirname "$0")"/tests
-
-SERIALIZE_TEST_PASSED_COUNT=3
 
 echo "[test_daemon] Generating Makefile..."
 cmake .
 
 echo "[test_daemon] Building..."
 make -j
+
+cd ./tests
+
+SERIALIZE_TEST_PASSED_COUNT=3
 
 echo "[test_daemon] Running tests..."
 ./test_binary || SERIALIZE_TEST_PASSED_COUNT=$(($SERIALIZE_TEST_PASSED_COUNT-1))
