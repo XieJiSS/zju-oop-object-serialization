@@ -1,6 +1,9 @@
 #!/bin/bash
 
-cd "$(dirname "$0")"
+echo "[test_daemon] Cleaning previously generated files..."
+./clean_generated.sh
+
+cd "$(dirname "$0")"/tests
 
 SERIALIZE_TEST_PASSED_COUNT=3
 

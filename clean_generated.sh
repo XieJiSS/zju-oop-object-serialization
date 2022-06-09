@@ -6,4 +6,4 @@ clean_generated_files() {
   rm -rf ./result/*.b64
 }
 
-cd "$(dirname "$0")" && clean_generated_files
+cd "$(dirname "$0")"/tests && clean_generated_files

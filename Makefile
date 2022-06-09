@@ -206,77 +206,77 @@ include/thirdparty/tinyxml2.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/include/thirdparty/tinyxml2.cpp.s
 .PHONY : include/thirdparty/tinyxml2.cpp.s
 
-test_binary.o: test_binary.cpp.o
-.PHONY : test_binary.o
+tests/test_binary.o: tests/test_binary.cpp.o
+.PHONY : tests/test_binary.o
 
 # target to build an object file
-test_binary.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_binary.dir/build.make CMakeFiles/test_binary.dir/test_binary.cpp.o
-.PHONY : test_binary.cpp.o
+tests/test_binary.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_binary.dir/build.make CMakeFiles/test_binary.dir/tests/test_binary.cpp.o
+.PHONY : tests/test_binary.cpp.o
 
-test_binary.i: test_binary.cpp.i
-.PHONY : test_binary.i
+tests/test_binary.i: tests/test_binary.cpp.i
+.PHONY : tests/test_binary.i
 
 # target to preprocess a source file
-test_binary.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_binary.dir/build.make CMakeFiles/test_binary.dir/test_binary.cpp.i
-.PHONY : test_binary.cpp.i
+tests/test_binary.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_binary.dir/build.make CMakeFiles/test_binary.dir/tests/test_binary.cpp.i
+.PHONY : tests/test_binary.cpp.i
 
-test_binary.s: test_binary.cpp.s
-.PHONY : test_binary.s
+tests/test_binary.s: tests/test_binary.cpp.s
+.PHONY : tests/test_binary.s
 
 # target to generate assembly for a file
-test_binary.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_binary.dir/build.make CMakeFiles/test_binary.dir/test_binary.cpp.s
-.PHONY : test_binary.cpp.s
+tests/test_binary.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_binary.dir/build.make CMakeFiles/test_binary.dir/tests/test_binary.cpp.s
+.PHONY : tests/test_binary.cpp.s
 
-test_xml.o: test_xml.cpp.o
-.PHONY : test_xml.o
+tests/test_xml.o: tests/test_xml.cpp.o
+.PHONY : tests/test_xml.o
 
 # target to build an object file
-test_xml.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/test_xml.cpp.o
-.PHONY : test_xml.cpp.o
+tests/test_xml.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/tests/test_xml.cpp.o
+.PHONY : tests/test_xml.cpp.o
 
-test_xml.i: test_xml.cpp.i
-.PHONY : test_xml.i
+tests/test_xml.i: tests/test_xml.cpp.i
+.PHONY : tests/test_xml.i
 
 # target to preprocess a source file
-test_xml.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/test_xml.cpp.i
-.PHONY : test_xml.cpp.i
+tests/test_xml.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/tests/test_xml.cpp.i
+.PHONY : tests/test_xml.cpp.i
 
-test_xml.s: test_xml.cpp.s
-.PHONY : test_xml.s
+tests/test_xml.s: tests/test_xml.cpp.s
+.PHONY : tests/test_xml.s
 
 # target to generate assembly for a file
-test_xml.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/test_xml.cpp.s
-.PHONY : test_xml.cpp.s
+tests/test_xml.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml.dir/build.make CMakeFiles/test_xml.dir/tests/test_xml.cpp.s
+.PHONY : tests/test_xml.cpp.s
 
-test_xml_b64.o: test_xml_b64.cpp.o
-.PHONY : test_xml_b64.o
+tests/test_xml_b64.o: tests/test_xml_b64.cpp.o
+.PHONY : tests/test_xml_b64.o
 
 # target to build an object file
-test_xml_b64.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/test_xml_b64.cpp.o
-.PHONY : test_xml_b64.cpp.o
+tests/test_xml_b64.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/tests/test_xml_b64.cpp.o
+.PHONY : tests/test_xml_b64.cpp.o
 
-test_xml_b64.i: test_xml_b64.cpp.i
-.PHONY : test_xml_b64.i
+tests/test_xml_b64.i: tests/test_xml_b64.cpp.i
+.PHONY : tests/test_xml_b64.i
 
 # target to preprocess a source file
-test_xml_b64.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/test_xml_b64.cpp.i
-.PHONY : test_xml_b64.cpp.i
+tests/test_xml_b64.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/tests/test_xml_b64.cpp.i
+.PHONY : tests/test_xml_b64.cpp.i
 
-test_xml_b64.s: test_xml_b64.cpp.s
-.PHONY : test_xml_b64.s
+tests/test_xml_b64.s: tests/test_xml_b64.cpp.s
+.PHONY : tests/test_xml_b64.s
 
 # target to generate assembly for a file
-test_xml_b64.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/test_xml_b64.cpp.s
-.PHONY : test_xml_b64.cpp.s
+tests/test_xml_b64.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_xml_b64.dir/build.make CMakeFiles/test_xml_b64.dir/tests/test_xml_b64.cpp.s
+.PHONY : tests/test_xml_b64.cpp.s
 
 # Help Target
 help:
@@ -295,15 +295,15 @@ help:
 	@echo "... include/thirdparty/tinyxml2.o"
 	@echo "... include/thirdparty/tinyxml2.i"
 	@echo "... include/thirdparty/tinyxml2.s"
-	@echo "... test_binary.o"
-	@echo "... test_binary.i"
-	@echo "... test_binary.s"
-	@echo "... test_xml.o"
-	@echo "... test_xml.i"
-	@echo "... test_xml.s"
-	@echo "... test_xml_b64.o"
-	@echo "... test_xml_b64.i"
-	@echo "... test_xml_b64.s"
+	@echo "... tests/test_binary.o"
+	@echo "... tests/test_binary.i"
+	@echo "... tests/test_binary.s"
+	@echo "... tests/test_xml.o"
+	@echo "... tests/test_xml.i"
+	@echo "... tests/test_xml.s"
+	@echo "... tests/test_xml_b64.o"
+	@echo "... tests/test_xml_b64.i"
+	@echo "... tests/test_xml_b64.s"
 .PHONY : help
 
 
