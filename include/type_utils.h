@@ -187,8 +187,8 @@ namespace serializer {
 
   // we don't want to treat char* const as cstring, so we should not wrap T with remove_cv_t.
   template<typename T>
-  constexpr auto is_cstring_v = std::is_same_v<T, char*> ||
-                                std::is_same_v<T, const char*>;
+  constexpr auto is_cstring_v = std::is_same_v<std::remove_volatile_t<T>, char*> ||
+                                std::is_same_v<std::remove_volatile_t<T>, const char*>;
   
   template<typename T>
   constexpr auto is_string_cstring_v = std::is_same_v<remove_cv_t<T>, string> ||
