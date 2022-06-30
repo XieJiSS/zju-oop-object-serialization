@@ -25,10 +25,50 @@ using std::endl;
 
 using namespace serializer::binary;
 
-struct UserDefinedType {
+struct _SimpleStruct : BinSerializable {
+  _SimpleStruct() {}
+  _SimpleStruct(int a, int b) : a(a), b(b) {}
+  int a;
+  int b;
+  string serializeToString() const override {
+    std::stringstream ss;
+    ::serialize(a, ss);
+    ::serialize(b, ss);
+    return ss.str();
+  }
+  void deserializeFromString(const string& s) override {
+    std::stringstream ss(s);
+    ::deserialize(a, ss);
+    ::deserialize(b, ss);
+  }
+};
+
+struct UserDefinedType : BinSerializable {
+  UserDefinedType() {}
+  UserDefinedType(int idx, string name, vector<double> data, _SimpleStruct simpleObj) :
+    idx(idx),
+    name(name),
+    data(data),
+    simpleObj(simpleObj) {}
   int idx;
-  std::string name;
-  std::vector<double> data;
+  string name;
+  vector<double> data;
+  _SimpleStruct simpleObj;
+  string serializeToString() const override {
+    std::stringstream ss;
+    ::serialize(idx, ss);
+    ::serialize(name, ss);
+    ::serialize(data, ss);
+    ::serialize(simpleObj, ss);
+    return ss.str();
+  }
+  void deserializeFromString(const string& s) override {
+    std::stringstream ss(s);
+    ::deserialize(idx, ss);
+    ::deserialize(name, ss);
+    ::deserialize(data, ss);
+    ::deserialize(simpleObj, ss);
+  }
 };
 
 string serializeMyStruct(const UserDefinedType& udt) {
@@ -194,17 +234,19 @@ int main() {
   EXPECT_EQ(std::get<2>(tuple1), std::get<2>(tuple2), "std::get<2>(tuple)");
 
   // test user-defined types
-  UserDefinedType udt1 = {1, "MyName", {4.1, 5.2, 6.3}};
-  serialize(udt1, "result/udt.bin", serializeMyStruct);
+  UserDefinedType udt1 = {1, "MyName", {4.1, 5.2, 6.3}, _SimpleStruct{1, 2}};
+  serialize(udt1, "result/udt.bin");
   UserDefinedType udt2;
-  deserialize(udt2, "result/udt.bin", deserializeMyStruct);
+  deserialize(udt2, "result/udt.bin");
   EXPECT_EQ(udt1.idx, udt2.idx, "utd.idx");
   EXPECT_EQ(udt1.name, udt2.name, "utd.name");
   for(size_t i = 0; i < udt1.data.size(); i++) {
     EXPECT_EQ(udt1.data[i], udt2.data[i], "utd.data[" + std::to_string(i) + "]");
   }
+  EXPECT_EQ(udt1.simpleObj.a, udt2.simpleObj.a, "utd.simpleObj.a");
+  EXPECT_EQ(udt1.simpleObj.b, udt2.simpleObj.b, "utd.simpleObj.b");
   try {
-    deserialize(udt1, "result/non_existing_file.bin", deserializeMyStruct);
+    deserialize(udt1, "result/non_existing_file.bin");
     EXPECT_EQ(1, 0, "deserialize from non-existing file should throw an exception");
   } catch (const std::exception& e) {
     cout << "PASSED (XFAIL) deserialize(udt1, \"result/non_existing_file.bin\") failed as expected." << endl;
