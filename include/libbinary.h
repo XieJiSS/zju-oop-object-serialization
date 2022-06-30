@@ -18,6 +18,7 @@
 
 using std::string;
 using std::is_same_v;
+using std::is_base_of_v;
 using std::remove_cv_t;
 
 // Here, we're writing the declaration and the definition together, in a header file,
@@ -29,6 +30,11 @@ using std::remove_cv_t;
 
 namespace serializer {
   namespace binary {
+    struct BinSerializable {
+      virtual string serializeToString() const = 0;
+      virtual void deserializeFromString(const string& str) = 0;
+    };
+
     // anonymous namespace for private-like functions that should not be exposed to the user
     namespace {
       // declarations
@@ -110,23 +116,13 @@ namespace serializer {
     // declarations
     template<typename T>
     void serialize(const T& t, std::ostream& os);
-    // support user-defined serialize function for custom types
-    template<typename T>
-    void serialize(const T& t, std::ostream& os, string (*f)(const T&));
     template<typename T>
     void serialize(const T& t, const string &file_name);
-    template<typename T>
-    void serialize(const T& t, const string &file_name, string (*f)(const T&));
     
     template<typename T>
     void deserialize(T& t, std::istream& is);
-    // support user-defined deserialize function for custom types
-    template<typename T>
-    void deserialize(T& t, std::istream& is, void (*f)(T&, const string&));
     template<typename T>
     void deserialize(T& t, const string &file_name);
-    template<typename T>
-    void deserialize(T& t, const string &file_name, void (*f)(T&, const string&));
 
     // definitions
     template<typename T>
@@ -179,14 +175,13 @@ namespace serializer {
         } else {
           _write(os, t);
         }
+      } else if constexpr (is_base_of_v<BinSerializable, remove_cv_t<T>>) {
+        _debug("serialize: is_base_of_v<BinSerializable, remove_cv_t<T>>");
+        string s = t.serializeToString();
+        serialize(s, os);
       } else {
         constexpr auto x = impossible_error(t, "T is not a supported type, you must provide a serialize function");
       }
-    }
-    template<typename T>
-    void serialize(const T& t, std::ostream& os, string (*f)(const T&)) {
-      _debug("serialize(const T& t, std::ostream& os, string (*f)(const T&))");
-      _write(os, f(t));
     }
     template<typename T>
     void serialize(const T& t, const string &file_name) {
@@ -195,15 +190,6 @@ namespace serializer {
       // Check if file is opened successfully
       ASSERT(os.good());
       serialize(t, os);
-      os.close();
-    }
-    template<typename T>
-    void serialize(const T& t, const string &file_name, string (*f)(const T&)) {
-      _debug("serialize(const T& t, const string &file_name, string (*f)(const T&))");
-      std::ofstream os(file_name, std::ios::binary);
-      // Check if file is opened successfully
-      ASSERT(os.good());
-      serialize(t, os, f);
       os.close();
     }
 
@@ -273,16 +259,14 @@ namespace serializer {
         } else {
           _read(is, t);
         }
+      } else if constexpr (is_base_of_v<BinSerializable, remove_cv_t<T>>) {
+        _debug("deserialize: is_base_of_v<BinSerializable, remove_cv_t<T>>");
+        string s;
+        deserialize(s, is);
+        t.deserializeFromString(s);
       } else {
         constexpr auto x = impossible_error(t, "T is not a supported type, you must provide a deserialize function");
       }
-    }
-    template<typename T>
-    void deserialize(T& t, std::istream& is, void (*f)(T&, const string&)) {
-      _debug("deserialize(T& t, std::istream& is, void (*f)(T&, const string&))");
-      string str;
-      _read(is, str);
-      f(t, str);
     }
     template<typename T>
     void deserialize(T& t, const string &file_name) {
@@ -291,15 +275,6 @@ namespace serializer {
       // Check if file exists
       ASSERT(is.good());
       deserialize(t, is);
-      is.close();
-    }
-    template<typename T>
-    void deserialize(T& t, const string &file_name, void (*f)(T&, const string&)) {
-      _debug("deserialize(T& t, const string &file_name, void (*f)(T&, const string&))");
-      std::ifstream is(file_name, std::ios::binary);
-      // Check if file exists
-      ASSERT(is.good());
-      deserialize(t, is, f);
       is.close();
     }
   } // namespace binary
