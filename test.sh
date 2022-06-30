@@ -9,7 +9,7 @@ echo "[test_daemon] Generating Makefile..."
 cmake .
 
 echo "[test_daemon] Building..."
-make -j
+make -j || exit 1
 
 cd ./tests
 
