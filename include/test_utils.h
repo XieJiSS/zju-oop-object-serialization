@@ -18,6 +18,7 @@ static unsigned int total_failures = 0;
 
 #define SHOW_TEST_RESULT() \
   do { \
+    std::cout << "[test_result] "; \
     if (total_failures > 0) { \
       std::cout << total_failures << " tests within " << total_tests << " have failed!" << std::endl; \
     } else { \
