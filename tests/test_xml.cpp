@@ -30,19 +30,19 @@ struct _SimpleStruct : XMLSerializable {
   _SimpleStruct(int a, int b) : a(a), b(b) {}
   int a;
   int b;
-  vector<string> serializeXML() const override;
-  void deserializeXML(const vector<string>&) override;
+  vector<string> serializeToXML() const override;
+  void deserializeFromXML(const vector<string>&) override;
 };
 
-vector<string> _SimpleStruct::serializeXML() const {
+vector<string> _SimpleStruct::serializeToXML() const {
   vector<string> result;
-  result.push_back(serialize_to_string_xml(this->a, "s.a"));
-  result.push_back(serialize_to_string_xml(this->b, "s.b"));
+  result.push_back(serialize_to_string_xml(a, "s.a"));
+  result.push_back(serialize_to_string_xml(b, "s.b"));
   return result;
 }
-void _SimpleStruct::deserializeXML(const vector<string>& v) {
-  deserialize_from_string_xml(this->a, "s.a", v[0]);
-  deserialize_from_string_xml(this->b, "s.b", v[1]);
+void _SimpleStruct::deserializeFromXML(const vector<string>& v) {
+  deserialize_from_string_xml(a, "s.a", v[0]);
+  deserialize_from_string_xml(b, "s.b", v[1]);
 }
 
 // a nested struct
@@ -57,24 +57,24 @@ struct UserDefinedType : XMLSerializable {
   std::string name;
   std::vector<double> data;
   _SimpleStruct simpleObj;
-  vector<string> serializeXML() const override;
-  void deserializeXML(const vector<string>&) override;
+  vector<string> serializeToXML() const override;
+  void deserializeFromXML(const vector<string>&) override;
 };
 
-vector<string> UserDefinedType::serializeXML() const {
+vector<string> UserDefinedType::serializeToXML() const {
   vector<string> result;
-  result.push_back(serialize_to_string_xml(this->idx, "_0"));
-  result.push_back(serialize_to_string_xml(this->name, "_1"));
-  result.push_back(serialize_to_string_xml(this->data, "_2"));
-  result.push_back(serialize_to_string_xml(this->simpleObj, "_3"));
+  result.push_back(serialize_to_string_xml(idx, "_0"));
+  result.push_back(serialize_to_string_xml(name, "_1"));
+  result.push_back(serialize_to_string_xml(data, "_2"));
+  result.push_back(serialize_to_string_xml(simpleObj, "_3"));
   return result;
 }
 
-void UserDefinedType::deserializeXML(const vector<string>& v) {
-  deserialize_from_string_xml(this->idx, "_0", v[0]);
-  deserialize_from_string_xml(this->name, "_1", v[1]);
-  deserialize_from_string_xml(this->data, "_2", v[2]);
-  deserialize_from_string_xml(this->simpleObj, "_3", v[3]);
+void UserDefinedType::deserializeFromXML(const vector<string>& v) {
+  deserialize_from_string_xml(idx, "_0", v[0]);
+  deserialize_from_string_xml(name, "_1", v[1]);
+  deserialize_from_string_xml(data, "_2", v[2]);
+  deserialize_from_string_xml(simpleObj, "_3", v[3]);
 }
 
 int main() {
