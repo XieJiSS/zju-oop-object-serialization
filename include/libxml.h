@@ -24,13 +24,14 @@
 using std::vector;
 using std::string;
 using std::is_same_v;
+using std::is_base_of_v;
 using std::remove_cv_t;
 
 namespace serializer {
   namespace xml {
     struct XMLSerializable {
-      virtual vector<string> serializeXML() const = 0;
-      virtual void deserializeXML(const vector<string>& strings) = 0;
+      virtual vector<string> serializeToXML() const = 0;
+      virtual void deserializeFromXML(const vector<string>& strings) = 0;
     };
 
     // anonymous namespace for private-like helper functions
@@ -209,9 +210,9 @@ namespace serializer {
         } else {
           printer->PushAttribute("val", to_string_value(t).c_str());
         }
-      } else if constexpr (std::is_base_of_v<XMLSerializable, remove_cv_t<T>>) {
+      } else if constexpr (is_base_of_v<XMLSerializable, remove_cv_t<T>>) {
         _debug("serialize_xml: is_base_of_v<XMLSerializable, remove_cv_t<T>>");
-        vector<string> v = t.serializeXML();
+        vector<string> v = t.serializeToXML();
         serialize_xml(v, "udt", printer);
       } else {
         constexpr auto x = impossible_error(t, "T is not a supported type, you must derive T from XMLSerializable");
@@ -322,7 +323,7 @@ namespace serializer {
         _debug("deserialize_xml: is_base_of_v<XMLSerializable, remove_cv_t<T>>");
         vector<string> args;
         deserialize_xml(args, "udt", elem);
-        t.deserializeXML(args);
+        t.deserializeFromXML(args);
       } else {
         constexpr auto x = impossible_error(t, "T is not a supported type, you must derive T from XMLSerializable");
       }
