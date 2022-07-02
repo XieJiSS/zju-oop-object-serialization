@@ -8,7 +8,7 @@ The reason of implementing this library in a header-files-only manner will be ex
 ## Compile & Run
 
 ```bash
-$ test.sh
+$ ./test.sh
 ```
 
 Or you can compile it manually:
