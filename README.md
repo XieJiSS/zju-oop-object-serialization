@@ -73,9 +73,9 @@ For implementation details, see `include/type_utils.h`.
 
 ### Run-Time Checks
 
-Some runtime checks are not avoidable, acting as the last layer of safe guards to make sure that the program does not act in undefined behaviors. For instance, we need to check that files are correctly opened and are succesfully read into the memory, and that the input is valid. We also want to check that strings are successfully written into files, etc.
+Some runtime checks are not avoidable, acting as the last layer of safe guards to make sure that the program does not act in undefined behaviors. For instance, we need to check that files are correctly opened and are successfully read into the memory, and that the input is valid and sane. We also want to check that strings are successfully written into files and that files are correctly closed, etc.
 
-However, due to the nature of the language, unexpected errors will definitely exist. Like, you can modify the XML files directly, and if you are deserializing some values into raw pointers, you might get a segfault caused by out-of-bound memory accesses.
+However, due to the nature of the language, unexpected errors can still happen. Like, you can modify the XML file directly, and if you are deserializing some values into raw pointers, you might get a segfault caused by out-of-bound memory accesses.
 
 
 ## Additional Notes
