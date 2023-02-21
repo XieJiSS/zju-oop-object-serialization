@@ -63,7 +63,7 @@ Here is a list of type traits & techniques that I've used to implement compile-t
 - `std::enable_if_t`, `std::is_arithmetic_v`, `std::is_base_of`, `std::is_same_t`
 - `std::remove_cv_t`, `std::remove_volatile_t`, `std::void_t`, `std::true_type`, `std::false_type`
 - `std::declval`, `decltype`
-- `std::decay_t`, `std::is_specialization_of` (this is way too new, it's still a proposal, so I have to implement a shim)
+- `std::decay_t`, `std::is_specialization_of` (this is way too new, in fact it's still a proposal, so I have to implement a shim)
 - `if constexpr`
   - `static_assert`
   - A manually implemented `constexpr bool impossible_error` to replace `static_assert(false)` in the `else` branch of `if constexpr`-s, which will also be explained later
