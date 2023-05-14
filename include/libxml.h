@@ -1,59 +1,54 @@
 #pragma once
 
-#include "thirdparty/tinyxml2.h"
-#include "thirdparty/base64.h"
-#include "type_utils.h"
 #include "common.h"
+#include "thirdparty/base64.h"
+#include "thirdparty/tinyxml2.h"
+#include "type_utils.h"
 
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <cstring>
 #include <charconv>
+#include <cstring>
+#include <fstream>
+#include <initializer_list>
+#include <iomanip>
+#include <iostream>
+#include <list>
 #include <map>
 #include <set>
-#include <vector>
-#include <list>
-#include <variant>
-#include <initializer_list>
-#include <type_traits>
+#include <sstream>
 #include <stdexcept>
+#include <string>
+#include <type_traits>
+#include <variant>
+#include <vector>
 
-using std::vector;
-using std::string;
-using std::is_same_v;
 using std::is_base_of_v;
+using std::is_same_v;
 using std::remove_cv_t;
+using std::string;
+using std::vector;
 
 namespace serializer {
   namespace xml {
     struct XMLSerializable {
       virtual vector<string> serializeToXML() const = 0;
-      virtual void deserializeFromXML(const vector<string>& strings) = 0;
+      virtual void deserializeFromXML(const vector<string> &strings) = 0;
     };
 
     // anonymous namespace for private-like helper functions
     namespace {
       using namespace tinyxml2;
 
-      template<typename T>
-      typename std::enable_if_t<is_supported_literal_v<T>, string>
-      serialize_to_literal(const T &t);
-      template<typename T>
-      typename std::enable_if_t<is_supported_literal_v<T>, T>
-      deserialize_from_literal(const string &s);
-      template<typename T>
-      typename std::enable_if_t<is_supported_literal_v<T>, string>
-      to_string_value(const T& t);
-      template<typename T>
-      typename std::enable_if_t<is_supported_literal_v<T>, T>
-      from_string_value(const string& str);
+      template <typename T>
+      typename std::enable_if_t<is_supported_literal_v<T>, string> serialize_to_literal(const T &t);
+      template <typename T>
+      typename std::enable_if_t<is_supported_literal_v<T>, T> deserialize_from_literal(const string &s);
+      template <typename T>
+      typename std::enable_if_t<is_supported_literal_v<T>, string> to_string_value(const T &t);
+      template <typename T>
+      typename std::enable_if_t<is_supported_literal_v<T>, T> from_string_value(const string &str);
 
-      template<typename T>
-      typename std::enable_if_t<is_supported_literal_v<T>, string>
-      serialize_to_literal(const T &t) {
+      template <typename T>
+      typename std::enable_if_t<is_supported_literal_v<T>, string> serialize_to_literal(const T &t) {
         _debug("serialize_to_literal(const T& t)");
         if constexpr (is_same_v<remove_cv_t<T>, string>) {
           // due to the limitation of tinyxml2 (it only accpets char*), we'd like to discard
@@ -97,9 +92,8 @@ namespace serializer {
         }
       }
 
-      template<typename T>
-      typename std::enable_if_t<is_supported_literal_v<T>, T>
-      deserialize_from_literal(const string &s) {
+      template <typename T>
+      typename std::enable_if_t<is_supported_literal_v<T>, T> deserialize_from_literal(const string &s) {
         _debug("deserialize_from_literal(const string& s)");
         if constexpr (std::is_arithmetic_v<T>) {
           if constexpr (std::is_floating_point_v<T>) {
@@ -115,54 +109,52 @@ namespace serializer {
               // ditto.
               return static_cast<T>(std::stoull(s));
             } else {
-              constexpr auto x = impossible_error(0, "T is neither signed nor unsigned.");
+              static_assert(always_false<T>, "T is neither signed nor unsigned.");
             }
           } else {
-            constexpr auto x = impossible_error(0, "T is neither fp nor integral.");
+            static_assert(always_false<T>, "T is neither fp nor integral.");
           }
         } else if constexpr (is_same_v<remove_cv_t<T>, string>) {
           return s;
         } else if constexpr (is_same_v<remove_cv_t<T>, char *>) {
           return s.c_str();
         } else {
-          constexpr auto x = impossible_error(0, "T is not a supported literal.");
+          static_assert(always_false<T>, "T is not a supported literal.");
         }
       }
-      template<typename T>
-      typename std::enable_if_t<is_supported_literal_v<T>, string>
-      to_string_value(const T& t) {
+      template <typename T>
+      typename std::enable_if_t<is_supported_literal_v<T>, string> to_string_value(const T &t) {
         return serialize_to_literal(t);
       }
 
-      template<typename T>
-      typename std::enable_if_t<is_supported_literal_v<T>, T>
-      from_string_value(const string& str) {
+      template <typename T>
+      typename std::enable_if_t<is_supported_literal_v<T>, T> from_string_value(const string &str) {
         return deserialize_from_literal<T>(str);
       }
-    }
+    } // namespace
     // declarations
     // support user-defined serialize function for custom types
-    template<typename T>
-    void serialize_xml(const T& t, const string &node_name, XMLPrinter *printer);
-    template<typename T>
-    void serialize_xml(const T& t, const string &node_name, const string &file_name);
-    template<typename T>
-    string serialize_to_string_xml(const T& t, const string &node_name);
-    template<typename T>
-    void serialize_to_b64file_xml(const T& t, const string &node_name, const string &file_name);
+    template <typename T>
+    void serialize_xml(const T &t, const string &node_name, XMLPrinter *printer);
+    template <typename T>
+    void serialize_xml(const T &t, const string &node_name, const string &file_name);
+    template <typename T>
+    string serialize_to_string_xml(const T &t, const string &node_name);
+    template <typename T>
+    void serialize_to_b64file_xml(const T &t, const string &node_name, const string &file_name);
 
-    template<typename T>
-    void deserialize_xml(T& t, const string &node_name, XMLElement *parent);
-    template<typename T>
-    void deserialize_xml(T& t, const string &node_name, const string &file_name);
-    template<typename T>
-    void deserialize_from_string_xml(T& t, const string &node_name, const string &xml_string);
-    template<typename T>
-    void deserialize_from_b64file_xml(T& t, const string &node_name, const string &file_name);
+    template <typename T>
+    void deserialize_xml(T &t, const string &node_name, XMLElement *parent);
+    template <typename T>
+    void deserialize_xml(T &t, const string &node_name, const string &file_name);
+    template <typename T>
+    void deserialize_from_string_xml(T &t, const string &node_name, const string &xml_string);
+    template <typename T>
+    void deserialize_from_b64file_xml(T &t, const string &node_name, const string &file_name);
 
     // definitions
-    template<typename T>
-    void serialize_xml(const T& t, const string &node_name, XMLPrinter *printer) {
+    template <typename T>
+    void serialize_xml(const T &t, const string &node_name, XMLPrinter *printer) {
       _debug("serialize_xml(const T& t, const string &node_name, XMLPrinter *printer)");
       printer->OpenElement(node_name.c_str(), true);
       if constexpr (is_supported_container_v<T>) {
@@ -175,21 +167,21 @@ namespace serializer {
           _debug("serialize_xml: is_array_container_v<T>");
           printer->PushAttribute("size", std::to_string(t.size()).c_str());
           size_t index = 0;
-          for (const auto& el : t) {
+          for (const auto &el : t) {
             serialize_xml(el, string("_") + std::to_string(index++), printer);
           }
         } else if constexpr (is_tuple_v<T>) {
           _debug("serialize_xml: is_tuple_v<T>");
           // Here we use foreach_in_tuple to iterate over the elements of the tuple at
           // compile time, since std::get<i> is constexpr after C++14.
-          foreach_in_tuple(t, [&](const auto& el, const size_t i) {
+          foreach_in_tuple(t, [&](const auto &el, const size_t i) {
             serialize_xml(el, string("_") + std::to_string(i), printer);
           });
         } else if constexpr (is_map_container_v<T>) {
           _debug("serialize_xml: is_map_container_v<T>");
           printer->PushAttribute("size", std::to_string(t.size()).c_str());
           size_t index = 0;
-          for (const auto& el : t) {
+          for (const auto &el : t) {
             serialize_xml(el.first, string("_") + std::to_string(index) + "_k", printer);
             serialize_xml(el.second, string("_") + std::to_string(index) + "_v", printer);
             index++;
@@ -198,11 +190,12 @@ namespace serializer {
           _debug("serialize_xml: is_set_container_v<T>");
           printer->PushAttribute("size", std::to_string(t.size()).c_str());
           size_t index = 0;
-          for (const auto& el : t) {
+          for (const auto &el : t) {
             serialize_xml(el, string("_") + std::to_string(index++), printer);
           }
         } else {
-          constexpr auto x = impossible_error(t, "T is a supported container type, but it's serializer is missing.");
+          constexpr auto x =
+              impossible_error(t, "T is a supported container type, but it's serializer is missing.");
         }
       } else if constexpr (is_supported_literal_v<T>) {
         if constexpr (is_cstring_v<T>) {
@@ -215,12 +208,13 @@ namespace serializer {
         vector<string> v = t.serializeToXML();
         serialize_xml(v, "udt", printer);
       } else {
-        constexpr auto x = impossible_error(t, "T is not a supported type, you must derive T from XMLSerializable");
+        constexpr auto x =
+            impossible_error(t, "T is not a supported type, you must derive T from XMLSerializable");
       }
       printer->CloseElement(true);
     }
-    template<typename T>
-    void serialize_xml(const T& t, const string &node_name, const string &file_name) {
+    template <typename T>
+    void serialize_xml(const T &t, const string &node_name, const string &file_name) {
       _debug("serialize_xml(const T& t, const string &node_name, const string &file_name)");
       XMLPrinter printer;
       printer.OpenElement("serialization", true);
@@ -232,8 +226,8 @@ namespace serializer {
       ASSERT(ofs.good());
       ofs.close();
     }
-    template<typename T>
-    string serialize_to_string_xml(const T& t, const string &node_name) {
+    template <typename T>
+    string serialize_to_string_xml(const T &t, const string &node_name) {
       _debug("serialize_to_string_xml(const T& t, const string &node_name)");
       XMLPrinter printer;
       printer.OpenElement("serialization", true);
@@ -241,8 +235,8 @@ namespace serializer {
       printer.CloseElement(true);
       return string(printer.CStr());
     }
-    template<typename T>
-    void serialize_to_b64file_xml(const T& t, const string &node_name, const string &file_name) {
+    template <typename T>
+    void serialize_to_b64file_xml(const T &t, const string &node_name, const string &file_name) {
       _debug("serialize_to_b64file_xml(const T& t, const string &node_name, const string &file_name)");
       string xml = serialize_to_string_xml(t, node_name);
       string b64_xml = base64_encode_pem(xml);
@@ -253,8 +247,8 @@ namespace serializer {
       ofs.close();
     }
 
-    template<typename T>
-    void deserialize_xml(T& t, const string &node_name, XMLElement *parent) {
+    template <typename T>
+    void deserialize_xml(T &t, const string &node_name, XMLElement *parent) {
       _debug("deserialize_xml(T& t, const string &node_name, XMLElement *parent)");
       XMLElement *elem = parent->FirstChildElement(node_name.c_str());
       ASSERT(elem != nullptr);
@@ -272,16 +266,15 @@ namespace serializer {
           // resize
           t.resize(size);
           size_t index = 0;
-          for (auto& el : t) {
+          for (auto &el : t) {
             deserialize_xml(el, string("_") + std::to_string(index++), elem);
           }
         } else if constexpr (is_tuple_v<T>) {
           _debug("deserialize_xml: is_tuple_v<T>");
           // Here we use foreach_in_tuple to iterate over the elements of the tuple at
           // compile time, since std::get<i> is constexpr after C++14.
-          foreach_in_tuple(t, [&](auto& el, const auto i) {
-            deserialize_xml(el, string("_") + std::to_string(i), elem);
-          });
+          foreach_in_tuple(
+              t, [&](auto &el, const auto i) { deserialize_xml(el, string("_") + std::to_string(i), elem); });
         } else if constexpr (is_map_container_v<T>) {
           _debug("deserialize_xml: is_map_container_v<T>");
           ASSERT(elem->Attribute("size") != nullptr);
@@ -307,7 +300,8 @@ namespace serializer {
             t.insert(value);
           }
         } else {
-          constexpr auto x = impossible_error(t, "T is a supported container type, but it's serializer is missing.");
+          constexpr auto x =
+              impossible_error(t, "T is a supported container type, but it's serializer is missing.");
         }
       } else if constexpr (is_supported_literal_v<T>) {
         ASSERT(elem->Attribute("val") != nullptr);
@@ -325,33 +319,34 @@ namespace serializer {
         deserialize_xml(args, "udt", elem);
         t.deserializeFromXML(args);
       } else {
-        constexpr auto x = impossible_error(t, "T is not a supported type, you must derive T from XMLSerializable");
+        constexpr auto x =
+            impossible_error(t, "T is not a supported type, you must derive T from XMLSerializable");
       }
     }
-    template<typename T>
-    void deserialize_xml(T& t, const string &node_name, const string &file_name) {
+    template <typename T>
+    void deserialize_xml(T &t, const string &node_name, const string &file_name) {
       _debug("deserialize_xml(T& t, const string &node_name, const string &file_name)");
       XMLDocument doc;
       doc.LoadFile(file_name.c_str());
       ASSERT(doc.ErrorID() == 0);
-      XMLElement* root = doc.FirstChildElement("serialization");
+      XMLElement *root = doc.FirstChildElement("serialization");
       ASSERT(root != nullptr);
       deserialize_xml(t, node_name, root);
       doc.Clear();
     }
-    template<typename T>
-    void deserialize_from_string_xml(T& t, const string &node_name, const string &xml_string) {
+    template <typename T>
+    void deserialize_from_string_xml(T &t, const string &node_name, const string &xml_string) {
       _debug("deserialize_from_string_xml(T& t, const string &node_name, const string &xml_string)");
       XMLDocument doc;
       doc.Parse(xml_string.c_str());
       ASSERT(doc.ErrorID() == 0);
-      XMLElement* root = doc.FirstChildElement("serialization");
+      XMLElement *root = doc.FirstChildElement("serialization");
       ASSERT(root != nullptr);
       deserialize_xml(t, node_name, root);
       doc.Clear();
     }
-    template<typename T>
-    void deserialize_from_b64file_xml(T& t, const string &node_name, const string &file_name) {
+    template <typename T>
+    void deserialize_from_b64file_xml(T &t, const string &node_name, const string &file_name) {
       _debug("deserialize_from_b64file_xml(T& t, const string &node_name, const string &file_name)");
       std::ifstream ifs(file_name);
       ASSERT(ifs.is_open());
