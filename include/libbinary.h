@@ -1,25 +1,25 @@
 #pragma once
 
-#include <iostream>
-#include <fstream>
-#include <string>
 #include <cstring>
+#include <fstream>
+#include <initializer_list>
+#include <iostream>
+#include <list>
 #include <map>
 #include <set>
-#include <vector>
-#include <list>
-#include <variant>
-#include <initializer_list>
-#include <type_traits>
 #include <stdexcept>
+#include <string>
+#include <type_traits>
+#include <variant>
+#include <vector>
 
-#include "type_utils.h"
 #include "common.h"
+#include "type_utils.h"
 
-using std::string;
-using std::is_same_v;
 using std::is_base_of_v;
+using std::is_same_v;
 using std::remove_cv_t;
+using std::string;
 
 // Here, we're writing the declaration and the definition together, in a header file,
 // so that we can make sure the definition is always in the same translation unit with
@@ -32,55 +32,55 @@ namespace serializer {
   namespace binary {
     struct BinSerializable {
       virtual string serializeToString() const = 0;
-      virtual void deserializeFromString(const string& str) = 0;
+      virtual void deserializeFromString(const string &str) = 0;
     };
 
     // anonymous namespace for private-like functions that should not be exposed to the user
     namespace {
       // declarations
-      template<typename T>
-      void _write(std::ostream& os, const T& t, size_t size);
+      template <typename T>
+      void _write(std::ostream &os, const T &t, size_t size);
       // Note that we could have declare this as std::enable_if_t<std::is_arithmetic_v<T>, void>
       // to protect this generic function from being called with container types that can't be
       // casted to const char * directly, but since we need to handle const char * itself, the
       // is_arithmetic_v constraint is not suitable. Instead, we use static_assert to check
       // incorrectly matched function calls at compile time to ensure that the final _write call
       // won't produce useless nonsense data.
-      template<typename T>
-      void _write(std::ostream& os, const T& t);
-      void _write(std::ostream& os, const std::string& s);
+      template <typename T>
+      void _write(std::ostream &os, const T &t);
+      void _write(std::ostream &os, const std::string &s);
 
-      template<typename T>
-      void _read(std::istream& is, T& t);
+      template <typename T>
+      void _read(std::istream &is, T &t);
       // No need to pass in the str's size, since we've stored the size of the string we're reading.
-      void _read(std::istream& is, std::string& str);
+      void _read(std::istream &is, std::string &str);
 
       // definitions
-      template<typename T>
-      void _write(std::ostream& os, const T& t, size_t size) {
+      template <typename T>
+      void _write(std::ostream &os, const T &t, size_t size) {
         _debug("_write(std::ostream& os, const T& t, size_t size)");
         static_assert(!is_array_container_v<T>, "T must not be a container");
         // strings are handled separately
         static_assert(!is_same_v<remove_cv_t<T>, std::string>, "T must not be a string");
-        os.write(reinterpret_cast<const char*>(&size), sizeof(size));
+        os.write(reinterpret_cast<const char *>(&size), sizeof(size));
         if constexpr (std::is_pointer_v<T>) {
-          os.write(reinterpret_cast<const char*>(t), size);
+          os.write(reinterpret_cast<const char *>(t), size);
         } else {
-          os.write(reinterpret_cast<const char*>(&t), size);
+          os.write(reinterpret_cast<const char *>(&t), size);
         }
         // Check that the write succeeded.
         ASSERT(os.good());
       }
-      template<typename T>
-      void _write(std::ostream& os, const T& t) {
+      template <typename T>
+      void _write(std::ostream &os, const T &t) {
         _debug("_write(std::ostream& os, const T& t)");
         static_assert(!is_array_container_v<T>, "T must not be a container");
         static_assert(!is_same_v<remove_cv_t<T>, std::string>, "T must not be a string");
         const size_t size = sizeof(t);
-        os.write(reinterpret_cast<const char*>(&size), sizeof(size));
-        os.write(reinterpret_cast<const char*>(&t), size);
+        os.write(reinterpret_cast<const char *>(&size), sizeof(size));
+        os.write(reinterpret_cast<const char *>(&t), size);
       }
-      void _write(std::ostream& os, const std::string& s) {
+      inline void _write(std::ostream &os, const std::string &s) {
         _debug("_write(std::ostream& os, const std::string& s)");
         // we can't use sizeof(s.c_str()), because the string might contain null characters
         size_t size = s.size();
@@ -88,45 +88,45 @@ namespace serializer {
       }
 
       // If T is a pointer type, then t should be pre-allocated.
-      template<typename T>
-      void _read(std::istream& is, T& t) {
+      template <typename T>
+      void _read(std::istream &is, T &t) {
         _debug("_read(std::istream& is, T& t)");
         static_assert(!is_array_container_v<T>, "T must not be a container");
         static_assert(!is_same_v<remove_cv_t<T>, std::string>, "T must not be a string");
         size_t size;
-        is.read(reinterpret_cast<char*>(&size), sizeof(size));
+        is.read(reinterpret_cast<char *>(&size), sizeof(size));
         if constexpr (std::is_pointer_v<T>) {
           is.read(reinterpret_cast<char *>(t), size);
         } else {
           is.read(reinterpret_cast<char *>(&t), size);
         }
       }
-      void _read(std::istream& is, std::string& str) {
+      inline void _read(std::istream &is, std::string &str) {
         _debug("_read(std::istream& is, std::string& str)");
         size_t size;
-        is.read(reinterpret_cast<char*>(&size), sizeof(size));
-        char* c_str = new char[size];  // +1 for null terminator
+        is.read(reinterpret_cast<char *>(&size), sizeof(size));
+        char *c_str = new char[size]; // +1 for null terminator
         is.read(c_str, size);
         ASSERT(is.good());
         str = string(c_str, size);
         delete[] c_str;
       }
-    }
-    
+    } // namespace
+
     // declarations
-    template<typename T>
-    void serialize(const T& t, std::ostream& os);
-    template<typename T>
-    void serialize(const T& t, const string &file_name);
-    
-    template<typename T>
-    void deserialize(T& t, std::istream& is);
-    template<typename T>
-    void deserialize(T& t, const string &file_name);
+    template <typename T>
+    void serialize(const T &t, std::ostream &os);
+    template <typename T>
+    void serialize(const T &t, const string &file_name);
+
+    template <typename T>
+    void deserialize(T &t, std::istream &is);
+    template <typename T>
+    void deserialize(T &t, const string &file_name);
 
     // definitions
-    template<typename T>
-    void serialize(const T& t, std::ostream& os) {
+    template <typename T>
+    void serialize(const T &t, std::ostream &os) {
       _debug("serialize(const T& t, std::ostream& os)");
       if constexpr (is_supported_container_v<T>) {
         _debug("is_supported_container_v<T>");
@@ -138,7 +138,7 @@ namespace serializer {
           _debug("serialize: is_array_container_v<T>");
           size_t size = t.size();
           _write(os, size, sizeof(size));
-          for (const auto& elem : t) {
+          for (const auto &elem : t) {
             serialize(elem, os);
           }
         } else if constexpr (is_tuple_v<T>) {
@@ -147,14 +147,12 @@ namespace serializer {
           _write(os, size, sizeof(size));
           // Here we use foreach_in_tuple to iterate over the elements of the tuple at
           // compile time, since std::get<i> is constexpr after C++14.
-          foreach_in_tuple(t, [&](const auto& elem, auto) {
-            serialize(elem, os);
-          });
+          foreach_in_tuple(t, [&](const auto &elem, auto) { serialize(elem, os); });
         } else if constexpr (is_map_container_v<T>) {
           _debug("serialize: is_map_container_v<T>");
           size_t size = t.size();
           _write(os, size, sizeof(size));
-          for (const auto& elem : t) {
+          for (const auto &elem : t) {
             serialize(elem.first, os);
             serialize(elem.second, os);
           }
@@ -162,11 +160,11 @@ namespace serializer {
           _debug("serialize: is_set_container_v<T>");
           size_t size = t.size();
           _write(os, size, sizeof(size));
-          for (const auto& elem : t) {
+          for (const auto &elem : t) {
             serialize(elem, os);
           }
         } else {
-          constexpr auto x = impossible_error(t, "T is a supported container type, but it's serializer is missing.");
+          static_assert(always_false<T>, "T is a supported container type, but it's serializer is missing.");
         }
       } else if constexpr (is_supported_literal_v<T>) {
         if constexpr (is_cstring_v<T>) {
@@ -180,11 +178,11 @@ namespace serializer {
         string s = t.serializeToString();
         serialize(s, os);
       } else {
-        constexpr auto x = impossible_error(t, "T is not a supported type, you must provide a serialize function");
+        static_assert(always_false<T>, "T is not a supported type, you must provide a serialize function");
       }
     }
-    template<typename T>
-    void serialize(const T& t, const string &file_name) {
+    template <typename T>
+    void serialize(const T &t, const string &file_name) {
       _debug("serialize(const T& t, const string &file_name)");
       std::ofstream os(file_name, std::ios::binary);
       // Check if file is opened successfully
@@ -193,8 +191,8 @@ namespace serializer {
       os.close();
     }
 
-    template<typename T>
-    void deserialize(T& t, std::istream& is) {
+    template <typename T>
+    void deserialize(T &t, std::istream &is) {
       _debug("deserialize(T& t, std::istream& is)");
       if constexpr (is_supported_container_v<T>) {
         _debug("is_supported_container_v<T>");
@@ -211,7 +209,7 @@ namespace serializer {
           _read(is, size);
           _debug("deserialize: resizing to " + std::to_string(size));
           t.resize(size);
-          for (auto& elem : t) {
+          for (auto &elem : t) {
             // here we use the reference to the element in the container
             // because std::list does not support operator[]
             deserialize(elem, is);
@@ -223,9 +221,7 @@ namespace serializer {
           ASSERT(size == std::tuple_size_v<T>);
           // Here we use foreach_in_tuple to iterate over the elements of the tuple at
           // compile time, since std::get<i> is constexpr after C++14.
-          foreach_in_tuple(t, [&](auto& elem, auto) {
-            deserialize(elem, is);
-          });
+          foreach_in_tuple(t, [&](auto &elem, auto) { deserialize(elem, is); });
         } else if constexpr (is_map_container_v<T>) {
           _debug("deserialize: is_map_container_v<T>");
           size_t size;
@@ -247,7 +243,7 @@ namespace serializer {
             t.insert(value);
           }
         } else {
-          constexpr auto x = impossible_error(t, "T is a supported container type, but it's serializer is missing.");
+          static_assert(always_false<T>, "T is a supported container type, but it's serializer is missing.");
         }
       } else if constexpr (is_supported_literal_v<T>) {
         if constexpr (is_cstring_v<T>) {
@@ -265,11 +261,11 @@ namespace serializer {
         deserialize(s, is);
         t.deserializeFromString(s);
       } else {
-        constexpr auto x = impossible_error(t, "T is not a supported type, you must provide a deserialize function");
+        static_assert(always_false<T>, "T is not a supported type, you must provide a deserialize function");
       }
     }
-    template<typename T>
-    void deserialize(T& t, const string &file_name) {
+    template <typename T>
+    void deserialize(T &t, const string &file_name) {
       _debug("deserialize(T& t, const string &file_name)");
       std::ifstream is(file_name, std::ios::binary);
       // Check if file exists
@@ -278,4 +274,4 @@ namespace serializer {
       is.close();
     }
   } // namespace binary
-} // namespace serialize
+} // namespace serializer
